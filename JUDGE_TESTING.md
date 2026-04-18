@@ -36,13 +36,12 @@ In Swagger:
 
 - Click `Try it out`
 - Upload one single-face image first
-- Upload one multi-face image next
-- Optionally upload multiple files at once
+- Upload one multi-face image next (run the endpoint again)
 
 Expected result:
 
 - `success: true`
-- `images_processed` increases with valid uploads
+- `images_processed` should be `1` per request
 - `faces_discovered` reflects detected faces
 - `details` contains one entry per uploaded file
 - Each face should map to a `grab_id`
@@ -117,15 +116,18 @@ Ingest a single image:
 
 ```bash
 curl -X POST http://localhost:8000/ingest \
-  -F "files=@path/to/image.jpg"
+  -F "file=@path/to/image.jpg"
 ```
 
 Ingest multiple images:
 
 ```bash
+# Run one request per file
 curl -X POST http://localhost:8000/ingest \
-  -F "files=@path/to/image1.jpg" \
-  -F "files=@path/to/image2.jpg"
+  -F "file=@path/to/image1.jpg"
+
+curl -X POST http://localhost:8000/ingest \
+  -F "file=@path/to/image2.jpg"
 ```
 
 Selfie auth:

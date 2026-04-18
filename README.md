@@ -2,6 +2,10 @@
 
 A high-performance image processing backend designed for large-scale events. Imagine a marathon with 500 runners and 50,000 photos — Grabpic uses **facial recognition** to automatically group images by identity and provides a **Selfie-as-a-Key** retrieval system.
 
+## Judge Testing
+
+For a quick evaluator flow, see [JUDGE_TESTING.md](JUDGE_TESTING.md).
+
 ## Architecture
 
 ```
@@ -75,27 +79,23 @@ curl http://localhost:8000/health
 ```
 
 ### 2. Ingest Images (Upload)
-Upload one or more images for face discovery:
+Upload one image for face discovery per request:
 ```bash
 # Single image
 curl -X POST http://localhost:8000/ingest \
-  -F "files=@photo1.jpg"
-
-# Multiple images
-curl -X POST http://localhost:8000/ingest \
-  -F "files=@photo1.jpg" \
-  -F "files=@photo2.jpg" \
-  -F "files=@photo3.jpg"
+  -F "file=@photo1.jpg"
 ```
+
+To ingest multiple files, call `/ingest` multiple times or use `/ingest/crawl`.
 
 **Response:**
 ```json
 {
   "success": true,
-  "images_processed": 3,
-  "faces_discovered": 7,
-  "new_grab_ids_created": 4,
-  "existing_grab_ids_matched": 3,
+  "images_processed": 1,
+  "faces_discovered": 1,
+  "new_grab_ids_created": 1,
+  "existing_grab_ids_matched": 0,
   "details": [...]
 }
 ```
@@ -174,7 +174,7 @@ curl http://localhost:8000/faces
 ## Key Design Decisions
 
 - **Facenet model**: 128-dimensional embeddings offer good balance of speed and accuracy
-- **Cosine distance** with threshold 0.40 for face matching
+- **Cosine distance** with threshold 0.45 for face matching
 - **Many-to-many schema**: `face_images` junction table allows one image → many faces and one face → many images
 - **UUID-based grab_ids**: Unique, collision-resistant identifiers
 - **Lazy model loading**: DeepFace model loaded on first request to speed up startup
