@@ -154,7 +154,7 @@ def _process_image(
     "Each image is scanned for faces, and each unique face is assigned a grab_id.",
 )
 async def ingest_images(
-    files: List[UploadFile] = File(..., description="Image files to process"),
+    file: UploadFile = File(..., description="Image file to process"),
     db: Session = Depends(get_db),
 ):
     known_faces = _get_known_faces(db)
@@ -165,35 +165,41 @@ async def ingest_images(
     details = []
     images_processed = 0
 
-    for file in files:
-        # Validate file extension
-        ext = os.path.splitext(file.filename or "")[1].lower()
-        if ext not in ALLOWED_EXTENSIONS:
-            details.append(
-                IngestImageDetail(
-                    filename=file.filename or "unknown",
-                    status="skipped",
-                    reason=f"Unsupported file type: {ext}",
-                )
+    # Validate file extension
+    ext = os.path.splitext(file.filename or "")[1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        details.append(
+            IngestImageDetail(
+                filename=file.filename or "unknown",
+                status="skipped",
+                reason=f"Unsupported file type: {ext}",
             )
-            continue
+        )
+        return IngestResponse(
+            success=True,
+            images_processed=0,
+            faces_discovered=0,
+            new_grab_ids_created=0,
+            existing_grab_ids_matched=0,
+            details=details,
+        )
 
-        # Save to storage directory
-        os.makedirs(STORAGE_DIR, exist_ok=True)
-        save_filename = f"{uuid.uuid4()}{ext}"
-        save_path = os.path.join(STORAGE_DIR, save_filename)
+    # Save to storage directory
+    os.makedirs(STORAGE_DIR, exist_ok=True)
+    save_filename = f"{uuid.uuid4()}{ext}"
+    save_path = os.path.join(STORAGE_DIR, save_filename)
 
-        content = await file.read()
-        with open(save_path, "wb") as f:
-            f.write(content)
+    content = await file.read()
+    with open(save_path, "wb") as f:
+        f.write(content)
 
-        # Process the image
-        result = _process_image(save_path, file.filename or save_filename, db, known_faces)
-        details.append(result)
-        images_processed += 1
-        total_faces += result.faces_found
-        total_new += result.new_ids
-        total_matched += result.matched_ids
+    # Process the image
+    result = _process_image(save_path, file.filename or save_filename, db, known_faces)
+    details.append(result)
+    images_processed += 1
+    total_faces += result.faces_found
+    total_new += result.new_ids
+    total_matched += result.matched_ids
 
     db.commit()
 
