@@ -6,6 +6,19 @@ A high-performance image processing backend designed for large-scale events. Ima
 
 For a quick evaluator flow, see [JUDGE_TESTING.md](JUDGE_TESTING.md).
 
+For evaluation, please use sample images from the `test_images/` folder in this repository. These are the images used for the latest functional verification.
+
+## Public Demo Links
+
+- Swagger UI: https://mysimon-wet-basin-understood.trycloudflare.com/docs
+- ReDoc: https://mysimon-wet-basin-understood.trycloudflare.com/redoc
+
+Note: This is a quick Cloudflare Tunnel URL and works only while the local tunnel process is running.
+
+## API Documentation
+
+Detailed endpoint documentation is available in [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
+
 ## Architecture
 
 ```

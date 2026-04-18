@@ -8,6 +8,11 @@ Use this guide to quickly verify the API during judging.
 - ReDoc: http://localhost:8000/redoc
 - Health check: http://localhost:8000/health
 
+## Test Images For Judges
+
+Please use images from the `test_images/` folder in this repository.
+These are the same files used for the latest short-window validation before submission.
+
 ## What to Test First
 
 1. Open Swagger UI at `/docs`.
