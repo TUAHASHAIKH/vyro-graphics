@@ -58,7 +58,7 @@ Detailed endpoint documentation is available in [API_DOCUMENTATION.md](API_DOCUM
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd grabpic
+cd graphic
 
 # Create virtual environment
 python -m venv venv
